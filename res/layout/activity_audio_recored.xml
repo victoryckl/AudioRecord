@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <Button
+        android:id="@+id/mediarecorder1_AudioStartBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="开始录制音频" />
+    
+    <Button
+        android:id="@+id/mediarecorder1_AudioStopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="停止音频录制" />
+
+	<ListView 
+        android:id="@+id/simplelist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/mediarecorder1_AudioStartBtn">
+    </ListView>
+    
+	<TextView  
+	    android:id="@+id/empty"  
+	    android:layout_width="match_parent"  
+	    android:layout_height="match_parent"  
+	    android:layout_weight="1"  
+	    android:gravity="center"  
+	    android:padding="15dip"  
+	    android:text="nothing"  
+	    android:textSize="22sp"  
+	    android:visibility="gone" />
+    "
+</RelativeLayout>
