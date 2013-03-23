@@ -3,12 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <TextView 
+
+    <TextView
         android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="50sp"
-        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
         android:layout_marginLeft="12px"
-        android:textSize="24sp"/>
+        android:gravity="center_vertical"
+        android:textSize="24sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/text_length"
+            android:layout_width="wrap_content"
+            android:layout_height="25sp"
+            android:layout_marginRight="5px"
+            android:gravity="center_vertical"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/text_time"
+            android:layout_width="wrap_content"
+            android:layout_height="25sp"
+            android:layout_marginRight="5px"
+            android:gravity="center_vertical"
+            android:text="time"
+            android:textSize="18sp" />
+    </LinearLayout>
+
 </LinearLayout>

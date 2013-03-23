@@ -10,7 +10,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:text="开始录制音频" />
-    
+     
     <Button
         android:id="@+id/mediarecorder1_AudioStopBtn"
         android:layout_width="wrap_content"
