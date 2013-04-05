@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +30,13 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.text.DecimalFormat;
+
+
+@SuppressLint({ "SimpleDateFormat", "DefaultLocale" })
 public class AudioRecored extends Activity {
 	private Button mAudioStartBtn;
 	private Button mAudioStopBtn;
@@ -36,7 +45,7 @@ public class AudioRecored extends Activity {
 	private MediaRecorder mMediaRecorder;// MediaRecorder对象
 	private String strTempFile = "recaudio_";// 零时文件的前缀
 	private ListView mList;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +57,7 @@ public class AudioRecored extends Activity {
 
 	private void initList() {
 		mList = (ListView) findViewById(R.id.simplelist);
+		
 		setListEmptyView();
 		setOnItemClickListener();
 		setOnItemLongClickListener();
@@ -131,7 +141,7 @@ public class AudioRecored extends Activity {
 			/* ⑤停止录音 */
 			mMediaRecorder.stop();
 			/* 将录音文件添加到List中 */
-			addItem(mRecAudioFile.getName());
+			addItem(mRecAudioFile);
 			/* ⑥释放MediaRecorder */
 			mMediaRecorder.release();
 			mMediaRecorder = null;
@@ -172,15 +182,17 @@ public class AudioRecored extends Activity {
 		mList.setTag(listdata);
 	}
 
-	private void addItem(String item) {
-		List<Map<String, Object>> listdata = (List<Map<String, Object>>) mList
+	private void addItem(File item) {
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> tag = (List<Map<String, Object>>) mList
 				.getTag();
-		int count = listdata.size();
+		List<Map<String, Object>> listdata = tag;
 		listdata.add(getOneItem(item));
 		setListAdapter(listdata);
 	}
 
 	public void deleteItem(int position) {
+		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> listdata = (List<Map<String, Object>>) mList
 				.getTag();
 		listdata.remove(position);
@@ -189,8 +201,8 @@ public class AudioRecored extends Activity {
 
 	private void setListAdapter(List<Map<String, Object>> listdata) {
 		SimpleAdapter adapter = new SimpleAdapter(getBaseContext(), listdata,
-				R.layout.simple_item, new String[] { "text" },
-				new int[] { R.id.text });
+				R.layout.simple_item, new String[] { "text","text_length","text_time" },
+				new int[] { R.id.text,R.id.text_length,R.id.text_time });
 		mList.setAdapter(adapter);
 	}
 
@@ -203,16 +215,47 @@ public class AudioRecored extends Activity {
 			File[] files = home.listFiles(mFilter);
 			if (files != null && files.length > 0) {
 				for (File file : files) {
-					list.add(getOneItem(file.getName()));
+					list.add(getOneItem(file));
 				}
 			}
 		}
 		return list;
 	}
-
-	private Map<String, Object> getOneItem(String text) {
+	
+	private String GetFilePlayTime(File file){  
+		java.util.Date date;
+		SimpleDateFormat sy1;
+		String dateFormat = "error";
+		
+		try {
+			sy1 = new SimpleDateFormat("HH:mm:ss");//设置为时分秒的格式
+			 
+		    //使用媒体库获取播放时间
+			MediaPlayer mediaPlayer;
+			mediaPlayer = MediaPlayer.create(getBaseContext(), Uri.parse(file.toString()));
+	
+			//使用Date格式化播放时间mediaPlayer.getDuration()
+			date = sy1.parse("00:00:00");
+			date.setTime(mediaPlayer.getDuration() + date.getTime());//用消除date.getTime()时区差
+			dateFormat = sy1.format(date);
+	        
+	        mediaPlayer.release();
+	        
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+        return dateFormat;
+	}
+	
+	private Map<String, Object> getOneItem(File file) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("text", text);
+		DecimalFormat df = new DecimalFormat();
+
+		df.applyPattern("###,###,###,###,###");
+		
+		map.put("text", file.getName());
+		map.put("text_length", df.format(file.length()));
+		map.put("text_time", GetFilePlayTime(file));
 		return map;
 	}
 
@@ -265,7 +308,7 @@ public class AudioRecored extends Activity {
 
 				new AlertDialog.Builder(AudioRecored.this)
 						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setTitle("小心！").setMessage("确定删除\"" + mName + "\"吗?")
+						.setTitle("小心！").setMessage("确定删除\n\"" + mName + "\"吗?")
 						.setNegativeButton("确定", new OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
